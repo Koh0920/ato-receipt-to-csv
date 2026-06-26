@@ -1,0 +1,28 @@
+schema_version = "0.3"
+name = "receipt-to-csv"
+version = "0.1.0"
+type = "app"
+description = "Upload receipt PDFs and export date/merchant/total/tax to CSV"
+homepage = "https://github.com/Koh0920/ato-demo-apps"
+default_target = "main"
+
+[targets.main]
+runtime = "source"
+driver = "python"
+runtime_version = "3.11"
+# Declared server port: lets Ato synthesize a TCP readiness probe (the run is
+# reported Ready only after this port accepts) and expose the app_url — required
+# for the managed / Connected-Runner path. app.py binds $PORT (default 8000).
+port = 8000
+# Use a bare .py entrypoint (NOT "python app.py"): Ato launches it as
+# `uv run --offline python3 app.py`. A run command starting with "python" is instead
+# wrapped as `sh -c ...`, which the source/python sandbox mis-composes. app.py's
+# __main__ reads the Ato-injected $PORT and starts uvicorn with the stdlib asyncio
+# loop (uvloop's syscalls are blocked by the strict native sandbox).
+run = "app.py"
+
+[isolation]
+allow_env = ["PORT"]
+
+[network]
+egress_allow = ["localhost", "127.0.0.1"]

@@ -1,0 +1,30 @@
+# invoice2data-style template (illustrative + actually loaded by app.py).
+# These regexes are applied against the full extracted PDF text. The first
+# capturing group of each pattern is taken as the field value. Patterns are
+# tried in order; the first that matches wins for that field.
+issuer: generic-receipt
+
+keywords:
+  - Total
+  - 合計
+  - Amount Due
+
+fields:
+  date:
+    - '(?:発行日|日付|年月日)[：:\s]*([0-9]{4}[-/年][0-9]{1,2}[-/月][0-9]{1,2})'
+    - '\b([0-9]{4}[-/][0-9]{1,2}[-/][0-9]{1,2})\b'
+  total:
+    - '(?:合計|Amount\s*Due|Total)[：:\s]*[¥$€]?\s*([0-9][0-9,]*(?:\.[0-9]{2})?)'
+  tax:
+    - '(?:消費税|Tax|VAT)[：:\s(]*[0-9%]*[)\s]*[¥$€]?\s*([0-9][0-9,]*(?:\.[0-9]{2})?)'
+  currency:
+    - '(¥|\$|€|USD|JPY|EUR)'
+
+options:
+  currency_map:
+    '¥': JPY
+    '$': USD
+    '€': EUR
+    'USD': USD
+    'JPY': JPY
+    'EUR': EUR
