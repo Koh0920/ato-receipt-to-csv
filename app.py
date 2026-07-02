@@ -427,4 +427,7 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", "8000"))
     # loop="asyncio" forces the stdlib event loop; uvloop (pulled in by
     # uvicorn[standard]) uses syscalls the Ato strict native sandbox blocks.
-    uvicorn.run(app, host="127.0.0.1", port=port, loop="asyncio")
+    # Bind all interfaces: inside a Firecracker guest (Ready-State snapshot builds)
+    # the health probe arrives over the TAP device, not loopback. The CLI sandbox
+    # path still reaches it via 127.0.0.1 (0.0.0.0 includes loopback).
+    uvicorn.run(app, host=os.environ.get("HOST", "0.0.0.0"), port=port, loop="asyncio")
