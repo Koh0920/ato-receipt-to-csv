@@ -14,6 +14,9 @@ runtime_version = "3.11"
 # reported Ready only after this port accepts) and expose the app_url — required
 # for the managed / Connected-Runner path. app.py binds $PORT (default 8000).
 port = 8000
+# HTTP readiness probe: required by the Ready-State snapshot builder (v1) —
+# a snapshot is sealed only after this endpoint returns 200 inside the microVM.
+readiness_probe = { http_get = "/api/health" }
 # Use a bare .py entrypoint (NOT "python app.py"): Ato launches it as
 # `uv run --offline python3 app.py`. A run command starting with "python" is instead
 # wrapped as `sh -c ...`, which the source/python sandbox mis-composes. app.py's
